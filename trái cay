@@ -57,3 +57,4 @@ img = img.reshape(1,100,100,3)
 img = img.astype('float32')
 img = img/255
 print(label[np.argmax(model.predict(img))])
+https://colab.research.google.com/drive/1N7n9H7FC1NyVwBpAGYRVZvZCKL8C9iZz#scrollTo=s5cVP8JlOwKc
