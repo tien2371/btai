@@ -1,0 +1,51 @@
+import numpy as np
+import tensorflow as tf
+from tensorflow.keras.models import load_model
+from tensorflow.keras.utils import load_img
+from tensorflow.keras.utils import img_to_array
+from tensorflow.keras.optimizers import SGD,Adam
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+import matplotlib.pyplot as plt
+from keras.models import Sequential 
+from keras.utils import np_utils
+from keras.layers import Dense,Activation,Dropout,LSTM,BatchNormalization
+from keras.layers import Flatten
+from tensorflow.keras.optimizers import RMSprop
+from tensorflow.keras.utils import to_categorical
+from keras.layers.convolutional import Conv2D
+from keras.layers.convolutional import MaxPooling2D
+from google.colab import drive
+drive.mount('/content/drive')
+trainset='/content/drive/MyDrive/moneyvn/tienvn'
+data_generator = ImageDataGenerator(rescale=1./255,validation_split=0.1,width_shift_range=0.2,height_shift_range=0.2,zoom_range=0.2,horizontal_flip=True)
+train_dataset=data_generator.flow_from_directory(trainset,
+                                     target_size=(100,100),
+                                     batch_size=128,
+                                     class_mode='categorical',
+                                     subset="training",
+                                     shuffle=True,)
+validation_set=data_generator.flow_from_directory(trainset,
+                                              target_size=(100,100),
+                                              batch_size=128,
+                                              class_mode='categorical',
+                                              subset="validation",
+                                              shuffle=True)
+validation_set.class_indices
+label=['100','1000','10000', '100000','200', '2000','20000','200000','500','5000','50000','500000']
+model = Sequential()
+model.add(Conv2D(32,(3,3),activation='relu',kernel_initializer='he_uniform',padding ='same',input_shape=(100,100,3)))
+model.add(Conv2D(32,(3,3),activation='relu',kernel_initializer='he_uniform',padding ='same'))
+model.add(MaxPooling2D((2,2)))
+model.add(Conv2D(64,(3,3),activation='relu',kernel_initializer='he_uniform',padding ='same'))
+model.add(Conv2D(64,(3,3),activation='relu',kernel_initializer='he_uniform',padding ='same'))
+model.add(MaxPooling2D((2,2)))
+model.add(Conv2D(128,(3,3),activation='relu',kernel_initializer='he_uniform',padding ='same'))
+model.add(Conv2D(128,(3,3),activation='relu',kernel_initializer='he_uniform',padding ='same'))
+model.add(MaxPooling2D((2,2)))
+model.add(Flatten())
+model.add(Dense(64,activation='relu',kernel_initializer='he_uniform'))
+model.add(Dropout(0.2))
+model.add(Dense(12,activation='softmax'))
+model.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
+model.fit(train_dataset,batch_size=128,epochs=500,verbose=1,validation_data=validation_set)
+https://colab.research.google.com/drive/1WXLjWYvdLlG206vHEYWRxnO8x_qQCN4l?usp=sharing
